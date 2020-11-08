@@ -1,3 +1,5 @@
+# from re import search
+import re
 
 def read_input(filename):
     """
@@ -35,91 +37,104 @@ def parse_input(input):
 def init_map(input):
     x = int(input['C'][0][1])
     y = int(input['C'][0][2])
-    map = []
+    treasure_map = []
     for i in range(y):
-        map.append(['-' for i in range(x)])
+        treasure_map.append(['' for i in range(x)])
 
     for field in ['M', 'T', 'A']:
         for ele in input[field]:
             if field == 'M':
-                map[int(ele[2])][int(ele[1])] = 'M'
+                treasure_map[int(ele[2])][int(ele[1])] = 'M'
             elif field == 'T':
-                map[int(ele[2])][int(ele[1])] = ele[3]
+                treasure_map[int(ele[2])][int(ele[1])] = 'T({})'.format(ele[3])
             elif field == 'A':
-                map[int(ele[3])][int(ele[2])] = 'A-{}'.format(ele[1])
-    return map
+                treasure_map[int(ele[3])][int(ele[2])] = 'A-{}'.format(ele[1])
+    return treasure_map
 
-def move_adventurers(map, input):
-    adventurers = input['A']
-    final_adventurers = dict()
-    for adven in adventurers:
-        print(adven)
-        pos_x = int(adven[2])
-        pos_y = int(adven[3])
-        compass = ['N', 'E', 'S', 'W']
-        direc = compass.index(adven[4])
-        num_tre = 0
-        sequences = [char for char in adven[5]]
-
-        for mvt in sequences:
-            if mvt == 'A':
-                futur_y = pos_y
-                futur_x = pos_x
-                if direc == 0:
-                    futur_y -= 1
-                if direc == 1:
-                    futur_x += 1
-                if direc == 2:
-                    futur_y += 1
-                if direc == 3:
-                    futur_x -= 1
-                
-                #  Check map
-                pos_map = ''
-                try:
-                    pos_map = map[futur_y][futur_x]
-                except IndexError:
-                    pass
-
-                if pos_map == 'M' or str(pos_map).startswith('A-'):
-                    pass
-                elif isinstance(pos_map, int):
-                    if pos_map > 0:
-                        num_tre += 1
-                        map[futur_y][futur_x] = map[futur_y][futur_x] - 1
-                    pos_x = futur_x
-                    pos_y = futur_y
-                else: 
-                    pos_x = futur_x
-                    pos_y = futur_y
-            if mvt == 'D':
-                direc += 1
-                if direc > 3:
-                    direc = 0
-            if mvt == 'G':
-                direc -= 1
-                if direc < 0:
-                    direc = 3
-        final_adventurers[adven[1]] = {
-            'pos_x': pos_x,
-            'pos_y': pos_y,
-            'num_tre': num_tre,
-            'D': compass[direc],
+def parse_adventurers(input):
+    adven_pos = {}
+    adven_seq = []
+    for adven in input['A']:
+        seq = [adven[1]+'-'+x for x in adven[5]]
+        adven_pos[adven[1]] = {
+            'x': adven[2],
+            'y': adven[3],
+            'direc': adven[4],
+            'seq': seq,
+            'len_seq': len(seq),
+            'treasure': 0,
         }
-    display_map(map)
-    print(final_adventurers)
-    pass
+        adven_seq.append(seq)
+    
+    sequence = []
+    max_seq_len = max(map(len, adven_seq))
+    for x in range(max_seq_len):    
+        for y in range(len(adven_seq)):
+            try:
+                sequence.append(adven_seq[y][x])
+            except IndexError:
+                pass
 
-def display_map(map):
-    for y in map:
+    return adven_pos, sequence
+
+def move_adventurers(treasure_map, positions, sequence):
+    for seq in sequence:
+        name, mvt = seq.split('-')
+        pos_x = int(positions[name]['x'])
+        pos_y = int(positions[name]['y'])
+        compass = ['N', 'E', 'S', 'W']
+        direc = compass.index(positions[name]['direc'])
+        if mvt == 'D':
+            direc += 1
+            if direc > 3:
+                direc = 0
+            positions[name]['direc'] = compass[direc]
+        if mvt == 'G':
+            direc -= 1
+            if direc < 0:
+                direc = 3
+            positions[name]['direc'] = compass[direc]
+
+        if mvt == 'A':
+            futur_y = pos_y
+            futur_x = pos_x
+            if direc == 0:
+                futur_y -= 1
+            if direc == 1:
+                futur_x += 1
+            if direc == 2:
+                futur_y += 1
+            if direc == 3:
+                futur_x -= 1
+            
+            #  Check if the coordinate 
+            if (futur_x or futur_y) < 0 or futur_y > (len(treasure_map)-1) or futur_x > (len(treasure_map[0])-1)\
+                or treasure_map[futur_y][futur_x] == 'M' or re.search('A-', treasure_map[futur_y][futur_x]):
+                continue
+
+            pos_map = treasure_map[futur_y][futur_x]
+
+            if re.search(r'T\(\d+\)', pos_map):
+                pattern = re.compile(r'\((\d+)\)')
+                num = int(pattern.findall(pos_map)[0])
+                if num > 0:
+                    treasure_map[futur_y][futur_x] = 'T({})'.format(num - 1)
+                    positions[name]['treasure'] += 1
+            positions[name]['x'] = futur_x
+            positions[name]['y'] = futur_y
+            treasure_map[pos_y][pos_x] = str(treasure_map[pos_y][pos_x]).replace('A-{}'.format(name), '').strip()
+            treasure_map[futur_y][futur_x] = (str(treasure_map[futur_y][futur_x]) + ' A-{}'.format(name)).strip()
+
+def display_map(treasure_map):
+    for y in treasure_map:
         print(y)
 
 if __name__ == "__main__":
     text = read_input('input.txt')
     parsed = parse_input(text)
-    print(parsed)
-    map = init_map(parsed)
-    display_map(map)
-    move_adventurers(map, parsed)
+    treasure_map = init_map(parsed)
+    positions, sequence = parse_adventurers(parsed)
+    display_map(treasure_map)
+    move_adventurers(treasure_map, positions, sequence)
 
     pass
