@@ -19,96 +19,49 @@ def parse_input(input):
     parsed = dict()
     for line in input:
         input_split = line.replace(' ', '').split('-')
+        temp = dict()
 
-        if input_split[0] == 'C':
-            parsed['C'] = {
-                'x': int(input_split[1]),
-                'y': int(input_split[2]),
-            }
-        if input_split[0] == 'M':
-            if 'M' in parsed:
-                parsed['M'].append({
-                    'x': int(input_split[1]),
-                    'y': int(input_split[2]),
-                })
-            else:                
-                parsed['M'] = [{
-                    'x': int(input_split[1]),
-                    'y': int(input_split[2]),
-                }]
-        if input_split[0] == 'T':
-            if 'T' in parsed:
-                parsed['T'].append({
-                    'x': int(input_split[1]),
-                    'y': int(input_split[2]),
-                    'N': int(input_split[3]),
-                })
-            else:                
-                parsed['T'] = [{
-                    'x': int(input_split[1]),
-                    'y': int(input_split[2]),
-                    'N': int(input_split[3]),
-                }]
-        if input_split[0] == 'A':
-            if 'A' in parsed:
-                parsed['A'].append({
-                    'name': input_split[1],
-                    'x': int(input_split[2]),
-                    'y': int(input_split[3]),
-                    'D': input_split[4],
-                    'S': input_split[5],
-                })
-            else:                
-                parsed['A'] = [{
-                    'name': input_split[1],
-                    'x': int(input_split[2]),
-                    'y': int(input_split[3]),
-                    'D': input_split[4],
-                    'S': input_split[5],
-                }]
+        if input_split[0] in parsed:
+            for idx in range(1, len(input_split)):
+                temp[idx] = input_split[idx]
+            parsed[input_split[0]].append(temp)
+        else:         
+            for idx in range(1, len(input_split)):
+                temp[idx] = input_split[idx]
+            parsed[input_split[0]] = [temp]
+
     return parsed
 
-
-
-def init_mapping(input):
-    x = input['C']['x']
-    y = input['C']['y']
+def init_map(input):
+    x = int(input['C'][0][1])
+    y = int(input['C'][0][2])
     map = []
     for i in range(y):
         map.append(['-' for i in range(x)])
-    init_mountain(map, input)
-    init_treasure(map, input)
-    init_adventurers(map, input)
+
+    for field in ['M', 'T', 'A']:
+        for ele in input[field]:
+            if field == 'M':
+                map[int(ele[2])][int(ele[1])] = 'M'
+            elif field == 'T':
+                map[int(ele[2])][int(ele[1])] = ele[3]
+            elif field == 'A':
+                map[int(ele[3])][int(ele[2])] = 'A-{}'.format(ele[1])
     return map
-
-def init_mountain(map, input):
-    for ele in input['M']:
-        map[ele['y']][ele['x']] = 'M'
-
-def init_treasure(map, input):
-    for ele in input['T']:
-        map[ele['y']][ele['x']] = ele['N']
-
-def init_adventurers(map, input):
-    for ele in input['A']:
-        map[ele['y']][ele['x']] = 'A-{}'.format(ele['name'])
 
 def move_adventurers(map, input):
     adventurers = input['A']
     final_adventurers = dict()
     for adven in adventurers:
         print(adven)
-        pos_x = adven['x']
-        pos_y = adven['y']
+        pos_x = int(adven[2])
+        pos_y = int(adven[3])
         compass = ['N', 'E', 'S', 'W']
-        direc = compass.index(adven['D'])
+        direc = compass.index(adven[4])
         num_tre = 0
-        sequences = [char for char in adven['S']]
+        sequences = [char for char in adven[5]]
 
         for mvt in sequences:
-            # print('MVT: ', mvt)
-            # print('DIREC: ', direc)
-            # print('POS_X: {}, POS_Y:{}'.format(pos_x, pos_y))
             if mvt == 'A':
                 futur_y = pos_y
                 futur_x = pos_x
@@ -127,8 +80,7 @@ def move_adventurers(map, input):
                     pos_map = map[futur_y][futur_x]
                 except IndexError:
                     pass
-                # print('F_X: {}, F_Y:{}'.format(futur_x, futur_y))
-                # print('POS_MAP: ', pos_map)
+
                 if pos_map == 'M' or str(pos_map).startswith('A-'):
                     pass
                 elif isinstance(pos_map, int):
@@ -148,7 +100,7 @@ def move_adventurers(map, input):
                 direc -= 1
                 if direc < 0:
                     direc = 3
-        final_adventurers[adven['name']] = {
+        final_adventurers[adven[1]] = {
             'pos_x': pos_x,
             'pos_y': pos_y,
             'num_tre': num_tre,
@@ -166,7 +118,7 @@ if __name__ == "__main__":
     text = read_input('input.txt')
     parsed = parse_input(text)
     print(parsed)
-    map = init_mapping(parsed)
+    map = init_map(parsed)
     display_map(map)
     move_adventurers(map, parsed)
 
