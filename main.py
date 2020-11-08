@@ -122,7 +122,11 @@ def move_adventurers(map, input):
                     futur_x -= 1
                 
                 #  Check map
-                pos_map = map[futur_y][futur_x]
+                pos_map = ''
+                try:
+                    pos_map = map[futur_y][futur_x]
+                except IndexError:
+                    pass
                 # print('F_X: {}, F_Y:{}'.format(futur_x, futur_y))
                 # print('POS_MAP: ', pos_map)
                 if pos_map == 'M' or str(pos_map).startswith('A-'):
