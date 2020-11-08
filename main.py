@@ -154,17 +154,20 @@ def move_adventurers(map, input):
             'num_tre': num_tre,
             'D': compass[direc],
         }
-    print(map)
+    display_map(map)
     print(final_adventurers)
     pass
 
+def display_map(map):
+    for y in map:
+        print(y)
 
 if __name__ == "__main__":
     text = read_input('input.txt')
     parsed = parse_input(text)
     print(parsed)
     map = init_mapping(parsed)
-    print(map)
+    display_map(map)
     move_adventurers(map, parsed)
 
     pass
