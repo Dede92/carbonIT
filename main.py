@@ -70,6 +70,26 @@ def parse_input(input):
 
 
 
+def init_mapping(input):
+    x = input['C']['x']
+    y = input['C']['y']
+    map = []
+    for i in range(y):
+        map.append(['-' for i in range(x)])
+    init_mountain(map, input)
+    init_treasure(map, input)
+    return map
+
+def init_mountain(map, input):
+    for ele in input['M']:
+        map[ele['y']][ele['x']] = 'M'
+
+def init_treasure(map, input):
+    for ele in input['T']:
+        map[ele['y']][ele['x']] = ele['N']
+
+
+
 if __name__ == "__main__":
 
     pass
