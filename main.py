@@ -78,6 +78,7 @@ def init_mapping(input):
         map.append(['-' for i in range(x)])
     init_mountain(map, input)
     init_treasure(map, input)
+    init_adventurers(map, input)
     return map
 
 def init_mountain(map, input):
@@ -87,6 +88,10 @@ def init_mountain(map, input):
 def init_treasure(map, input):
     for ele in input['T']:
         map[ele['y']][ele['x']] = ele['N']
+
+def init_adventurers(map, input):
+    for ele in input['A']:
+        map[ele['y']][ele['x']] = 'A-{}'.format(ele['name'])
 
 def move_adventurers(map, input):
     adventurers = input['A']
@@ -120,7 +125,7 @@ def move_adventurers(map, input):
                 pos_map = map[futur_y][futur_x]
                 # print('F_X: {}, F_Y:{}'.format(futur_x, futur_y))
                 # print('POS_MAP: ', pos_map)
-                if pos_map == 'M':
+                if pos_map == 'M' or str(pos_map).startswith('A-'):
                     pass
                 elif isinstance(pos_map, int):
                     if pos_map > 0:
@@ -151,5 +156,11 @@ def move_adventurers(map, input):
 
 
 if __name__ == "__main__":
+    text = read_input('input.txt')
+    parsed = parse_input(text)
+    print(parsed)
+    map = init_mapping(parsed)
+    print(map)
+    move_adventurers(map, parsed)
 
     pass
