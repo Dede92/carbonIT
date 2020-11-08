@@ -1,5 +1,5 @@
-# from re import search
 import re
+from datetime import datetime
 
 def read_input(filename):
     """
@@ -22,7 +22,6 @@ def parse_input(input):
     for line in input:
         input_split = line.replace(' ', '').split('-')
         temp = dict()
-
         if input_split[0] in parsed:
             for idx in range(1, len(input_split)):
                 temp[idx] = input_split[idx]
@@ -33,6 +32,22 @@ def parse_input(input):
             parsed[input_split[0]] = [temp]
 
     return parsed
+
+def write_output(treasure_map, adventurers):
+    with open('output_{}.txt'.format(datetime.now()), 'a') as f:
+        f.write('C - {} - {}\n'.format(len(treasure_map[0]), len(treasure_map)))
+        for y in range(len(treasure_map)):
+            for x in range(len(treasure_map[y])):
+                if treasure_map[y][x] == 'M':
+                    f.write('M - {} - {}\n'.format(x,y))
+                elif re.search(r'T\(\d+\)', treasure_map[y][x]):
+                    pattern = re.compile(r'\((\d+)\)')
+                    num = int(pattern.findall(treasure_map[y][x])[0])
+                    f.write('T - {} - {} - {}\n'.format(x, y, num))
+        # Write adventurers to file
+        for name in adventurers:
+            adven = adventurers[name]
+            f.write('A - {} - {} - {} - {} - {}\n'.format(name, adven['x'], adven['y'], adven['direc'], adven['treasure']))
 
 def init_map(input):
     x = int(input['C'][0][1])
@@ -136,5 +151,5 @@ if __name__ == "__main__":
     positions, sequence = parse_adventurers(parsed)
     display_map(treasure_map)
     move_adventurers(treasure_map, positions, sequence)
-
+    write_output(treasure_map, positions)
     pass
