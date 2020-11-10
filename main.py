@@ -18,6 +18,9 @@ def read_input(filename):
     return text
 
 def parse_input(input):
+    """
+    Parse the text into a dict
+    """
     parsed = dict()
     for line in input:
         input_split = line.replace(' ', '').split('-')
@@ -50,6 +53,9 @@ def write_output(treasure_map, adventurers):
             f.write('A - {} - {} - {} - {} - {}\n'.format(name, adven['x'], adven['y'], adven['direc'], adven['treasure']))
 
 def init_map(input):
+    """
+    Create a map based on the dictionnay in input
+    """
     x = int(input['C'][0][1])
     y = int(input['C'][0][2])
     treasure_map = []
@@ -67,6 +73,9 @@ def init_map(input):
     return treasure_map
 
 def parse_adventurers(input):
+    """
+    Extract adventurers from the input and create the mvt sequence
+    """
     adven_pos = {}
     adven_seq = []
     for adven in input['A']:
@@ -93,6 +102,9 @@ def parse_adventurers(input):
     return adven_pos, sequence
 
 def move_adventurers(treasure_map, positions, sequence):
+    """
+    Apply the sequence mvt
+    """
     for seq in sequence:
         name, mvt = seq.split('-')
         pos_x = int(positions[name]['x'])
@@ -141,6 +153,9 @@ def move_adventurers(treasure_map, positions, sequence):
             treasure_map[futur_y][futur_x] = (str(treasure_map[futur_y][futur_x]) + ' A-{}'.format(name)).strip()
 
 def display_map(treasure_map):
+    """
+    Display the map
+    """
     for y in treasure_map:
         print(y)
 
@@ -152,4 +167,3 @@ if __name__ == "__main__":
     display_map(treasure_map)
     move_adventurers(treasure_map, positions, sequence)
     write_output(treasure_map, positions)
-    pass
