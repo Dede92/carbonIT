@@ -37,6 +37,9 @@ def parse_input(input):
     return parsed
 
 def write_output(treasure_map, adventurers):
+    """
+    Write the and adventurers to an txt file
+    """
     with open('output_{}.txt'.format(datetime.now()), 'a') as f:
         f.write('C - {} - {}\n'.format(len(treasure_map[0]), len(treasure_map)))
         for y in range(len(treasure_map)):
@@ -111,6 +114,7 @@ def move_adventurers(treasure_map, positions, sequence):
         pos_y = int(positions[name]['y'])
         compass = ['N', 'E', 'S', 'W']
         direc = compass.index(positions[name]['direc'])
+        # Si y a un changement de direction
         if mvt == 'D':
             direc += 1
             if direc > 3:
@@ -121,7 +125,7 @@ def move_adventurers(treasure_map, positions, sequence):
             if direc < 0:
                 direc = 3
             positions[name]['direc'] = compass[direc]
-
+        # Lorsque l'on avance d'une case
         if mvt == 'A':
             futur_y = pos_y
             futur_x = pos_x
@@ -134,7 +138,6 @@ def move_adventurers(treasure_map, positions, sequence):
             if direc == 3:
                 futur_x -= 1
             
-            #  Check if the coordinate 
             if (futur_x or futur_y) < 0 or futur_y > (len(treasure_map)-1) or futur_x > (len(treasure_map[0])-1)\
                 or treasure_map[futur_y][futur_x] == 'M' or re.search('A-', treasure_map[futur_y][futur_x]):
                 continue
