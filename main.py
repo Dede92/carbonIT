@@ -167,6 +167,7 @@ def move_adventurers(treasure_map, positions, sequence):
             treasure_map[futur_y][futur_x] = (
                 str(treasure_map[futur_y][futur_x]) +
                 ' A-{}'.format(name)).strip()
+    return treasure_map, positions
 
 
 def display_map(treasure_map):
@@ -184,7 +185,8 @@ if __name__ == "__main__":
     positions, sequence = parse_adventurers(parsed)
     print('BEGINNING')
     display_map(treasure_map)
-    move_adventurers(treasure_map, positions, sequence)
+    treasure_map_f, advens_pos = move_adventurers(treasure_map, positions,
+                                                sequence)
     print('END')
-    display_map(treasure_map)
-    write_output(treasure_map, positions)
+    display_map(treasure_map_f)
+    write_output(treasure_map_f, advens_pos)

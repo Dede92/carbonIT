@@ -116,8 +116,8 @@ class TestMap(unittest.TestCase):
             }
         }
         sequence = ['Lara-A', 'Lara-A', 'Lara-D', 'Lara-A']
-        move_adventurers(treasure_map, positions, sequence)
-        self.assertEqual(treasure_map, [['', '', 'A-Lara'], ['', '', 'M'],
+        treasure_map_f, adven_pos = move_adventurers(treasure_map, positions, sequence)
+        self.assertEqual(treasure_map_f, [['', '', 'A-Lara'], ['', '', 'M'],
                                         ['', 'T(3)', ''], ['', '', '']])
 
 
