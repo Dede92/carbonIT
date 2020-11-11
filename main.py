@@ -8,6 +8,7 @@ def read_input(filename):
     # Using readlines() 
     file1 = open(filename, 'r') 
     Lines = file1.readlines() 
+    file1.close()
     
     text = []
     # Strips the newline character 
@@ -169,4 +170,5 @@ if __name__ == "__main__":
     positions, sequence = parse_adventurers(parsed)
     display_map(treasure_map)
     move_adventurers(treasure_map, positions, sequence)
+    display_map(treasure_map)
     write_output(treasure_map, positions)
