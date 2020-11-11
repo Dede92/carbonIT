@@ -1,21 +1,23 @@
 import re
 from datetime import datetime
 
+
 def read_input(filename):
     """
     Read input file
     """
-    # Using readlines() 
-    file1 = open(filename, 'r') 
-    Lines = file1.readlines() 
+    # Using readlines()
+    file1 = open(filename, 'r')
+    Lines = file1.readlines()
     file1.close()
-    
+
     text = []
-    # Strips the newline character 
-    for line in Lines: 
+    # Strips the newline character
+    for line in Lines:
         if not line.strip().startswith('#'):
             text.append(line.strip())
     return text
+
 
 def parse_input(input):
     """
@@ -29,23 +31,25 @@ def parse_input(input):
             for idx in range(1, len(input_split)):
                 temp[idx] = input_split[idx]
             parsed[input_split[0]].append(temp)
-        else:         
+        else:
             for idx in range(1, len(input_split)):
                 temp[idx] = input_split[idx]
             parsed[input_split[0]] = [temp]
 
     return parsed
 
+
 def write_output(treasure_map, adventurers):
     """
     Write the and adventurers to an txt file
     """
     with open('output_{}.txt'.format(datetime.now()), 'a') as f:
-        f.write('C - {} - {}\n'.format(len(treasure_map[0]), len(treasure_map)))
+        f.write('C - {} - {}\n'.format(len(treasure_map[0]),
+                                       len(treasure_map)))
         for y in range(len(treasure_map)):
             for x in range(len(treasure_map[y])):
                 if treasure_map[y][x] == 'M':
-                    f.write('M - {} - {}\n'.format(x,y))
+                    f.write('M - {} - {}\n'.format(x, y))
                 elif re.search(r'T\(\d+\)', treasure_map[y][x]):
                     pattern = re.compile(r'\((\d+)\)')
                     num = int(pattern.findall(treasure_map[y][x])[0])
@@ -53,7 +57,10 @@ def write_output(treasure_map, adventurers):
         # Write adventurers to file
         for name in adventurers:
             adven = adventurers[name]
-            f.write('A - {} - {} - {} - {} - {}\n'.format(name, adven['x'], adven['y'], adven['direc'], adven['treasure']))
+            f.write('A - {} - {} - {} - {} - {}\n'.format(
+                name, adven['x'], adven['y'], adven['direc'],
+                adven['treasure']))
+
 
 def init_map(input):
     """
@@ -75,6 +82,7 @@ def init_map(input):
                 treasure_map[int(ele[3])][int(ele[2])] = 'A-{}'.format(ele[1])
     return treasure_map
 
+
 def parse_adventurers(input):
     """
     Extract adventurers from the input and create the mvt sequence
@@ -82,7 +90,7 @@ def parse_adventurers(input):
     adven_pos = {}
     adven_seq = []
     for adven in input['A']:
-        seq = [adven[1]+'-'+x for x in adven[5]]
+        seq = [adven[1] + '-' + x for x in adven[5]]
         adven_pos[adven[1]] = {
             'x': adven[2],
             'y': adven[3],
@@ -92,10 +100,10 @@ def parse_adventurers(input):
             'treasure': 0,
         }
         adven_seq.append(seq)
-    
+
     sequence = []
     max_seq_len = max(map(len, adven_seq))
-    for x in range(max_seq_len):    
+    for x in range(max_seq_len):
         for y in range(len(adven_seq)):
             try:
                 sequence.append(adven_seq[y][x])
@@ -103,6 +111,7 @@ def parse_adventurers(input):
                 pass
 
     return adven_pos, sequence
+
 
 def move_adventurers(treasure_map, positions, sequence):
     """
@@ -152,8 +161,13 @@ def move_adventurers(treasure_map, positions, sequence):
                     positions[name]['treasure'] += 1
             positions[name]['x'] = futur_x
             positions[name]['y'] = futur_y
-            treasure_map[pos_y][pos_x] = str(treasure_map[pos_y][pos_x]).replace('A-{}'.format(name), '').strip()
-            treasure_map[futur_y][futur_x] = (str(treasure_map[futur_y][futur_x]) + ' A-{}'.format(name)).strip()
+            treasure_map[pos_y][pos_x] = str(
+                treasure_map[pos_y][pos_x]).replace('A-{}'.format(name),
+                                                    '').strip()
+            treasure_map[futur_y][futur_x] = (
+                str(treasure_map[futur_y][futur_x]) +
+                ' A-{}'.format(name)).strip()
+
 
 def display_map(treasure_map):
     """
@@ -161,6 +175,7 @@ def display_map(treasure_map):
     """
     for y in treasure_map:
         print(y)
+
 
 if __name__ == "__main__":
     text = read_input('input.txt')
