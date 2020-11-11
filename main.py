@@ -1,5 +1,7 @@
+#!/usr/bin/python
 import re
 from datetime import datetime
+import sys
 
 
 def read_input(filename):
@@ -179,14 +181,14 @@ def display_map(treasure_map):
 
 
 if __name__ == "__main__":
-    text = read_input('input.txt')
+    text = read_input(sys.argv[1])
     parsed = parse_input(text)
     treasure_map = init_map(parsed)
     positions, sequence = parse_adventurers(parsed)
     print('BEGINNING')
     display_map(treasure_map)
     treasure_map_f, advens_pos = move_adventurers(treasure_map, positions,
-                                                sequence)
+                                                  sequence)
     print('END')
     display_map(treasure_map_f)
     write_output(treasure_map_f, advens_pos)
