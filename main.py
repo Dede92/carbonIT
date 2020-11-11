@@ -139,7 +139,7 @@ def move_adventurers(treasure_map, positions, sequence):
             if direc == 3:
                 futur_x -= 1
             
-            if (futur_x or futur_y) < 0 or futur_y > (len(treasure_map)-1) or futur_x > (len(treasure_map[0])-1)\
+            if futur_x < 0 or futur_y < 0 or futur_y > (len(treasure_map)-1) or futur_x > (len(treasure_map[0])-1)\
                 or treasure_map[futur_y][futur_x] == 'M' or re.search('A-', treasure_map[futur_y][futur_x]):
                 continue
 
@@ -168,7 +168,9 @@ if __name__ == "__main__":
     parsed = parse_input(text)
     treasure_map = init_map(parsed)
     positions, sequence = parse_adventurers(parsed)
+    print('BEGINNING')
     display_map(treasure_map)
     move_adventurers(treasure_map, positions, sequence)
+    print('END')
     display_map(treasure_map)
     write_output(treasure_map, positions)
