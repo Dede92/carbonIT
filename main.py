@@ -15,7 +15,6 @@ def read_input(filename):
     for line in Lines: 
         if not line.strip().startswith('#'):
             text.append(line.strip())
-            # print("Line: {}".format(line.strip())) 
     return text
 
 def parse_input(input):
@@ -138,7 +137,7 @@ def move_adventurers(treasure_map, positions, sequence):
                 futur_y += 1
             if direc == 3:
                 futur_x -= 1
-            
+
             if futur_x < 0 or futur_y < 0 or futur_y > (len(treasure_map)-1) or futur_x > (len(treasure_map[0])-1)\
                 or treasure_map[futur_y][futur_x] == 'M' or re.search('A-', treasure_map[futur_y][futur_x]):
                 continue
