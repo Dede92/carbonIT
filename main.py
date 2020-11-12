@@ -181,14 +181,15 @@ def display_map(treasure_map):
 
 
 if __name__ == "__main__":
-    text = read_input(sys.argv[1])
-    parsed = parse_input(text)
-    treasure_map = init_map(parsed)
-    positions, sequence = parse_adventurers(parsed)
-    print('BEGINNING')
-    display_map(treasure_map)
-    treasure_map_f, advens_pos = move_adventurers(treasure_map, positions,
-                                                  sequence)
-    print('END')
-    display_map(treasure_map_f)
-    write_output(treasure_map_f, advens_pos)
+    if len(sys.argv) == 2:
+        text = read_input(sys.argv[1])
+        parsed = parse_input(text)
+        treasure_map = init_map(parsed)
+        positions, sequence = parse_adventurers(parsed)
+        print('BEGINNING')
+        display_map(treasure_map)
+        treasure_map_f, advens_pos = move_adventurers(treasure_map, positions,
+                                                    sequence)
+        print('END')
+        display_map(treasure_map_f)
+        write_output(treasure_map_f, advens_pos)
